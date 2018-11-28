@@ -7,7 +7,14 @@ export default class App extends Component {
   goToScreen = (screenName) => {
     Navigation.push(this.props.componentId, {
       component: {
-        name: screenName
+        name: screenName,
+        options: {
+          topBar: {
+            title: {
+              text: screenName
+            }
+          }
+        }
       }
     })
   }
