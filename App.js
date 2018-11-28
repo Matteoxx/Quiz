@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, View, Button} from 'react-native';
+import {StyleSheet, Text, View, Button, StatusBar, TouchableOpacity, ScrollView} from 'react-native';
 import {Navigation} from 'react-native-navigation';
 
 export default class App extends Component {
@@ -15,8 +15,35 @@ export default class App extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Button title="Tests" onPress={()=> this.goToScreen('Tests')}></Button>
-        <Button title="Results" onPress={()=> this.goToScreen('Results')}></Button>
+        <StatusBar
+          barStyle="light-content"
+          backgroundColor="#4F6D7A"
+        />
+        <ScrollView>
+          <TouchableOpacity style={styles.tile} onPress={()=> this.goToScreen('Test')}>
+            <Text style={styles.title}>Title test #1</Text>
+            <Text style={styles.desc}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam congue accumsan ...</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.tile} onPress={()=> this.goToScreen('Test')}>
+            <Text style={styles.title}>Title test #2</Text>
+            <Text style={styles.desc}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam congue accumsan ...</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.tile} onPress={()=> this.goToScreen('Test')}>
+            <Text style={styles.title}>Title test #3</Text>
+            <Text style={styles.desc}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam congue accumsan ...</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.tile} onPress={()=> this.goToScreen('Test')}>
+            <Text style={styles.title}>Title test #4</Text>
+            <Text style={styles.desc}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam congue accumsan ...</Text>
+          </TouchableOpacity>
+          <View style={styles.results}>
+            <Text style={styles.resultsText}>Get to know your ranking results</Text>
+            <TouchableOpacity style={styles.btn} onPress={()=> this.goToScreen('Results')}>
+              <Text style={styles.resultsText}>Check</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      
       </View>
     );
   }
@@ -27,16 +54,39 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+    backgroundColor: '#4F6D7A'
   },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
+  tile: {
+    flex: 1,
+    margin: 15,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: 'black',
+    borderStyle: 'solid'
   },
-  instructions: {
+  title: {
+    fontSize: 24
+  },
+  desc: {
+    fontSize: 16
+  },
+  results: {
+    padding: 10,
+    borderWidth: 1,
+    borderColor: 'black',
+    borderStyle: 'solid',
+    alignItems: 'center'
+  },
+  btn: {
+    width: '50%',
+    padding: 5,
+    borderWidth: 1,
+    borderColor: 'black',
+    borderStyle: 'solid',
+    marginTop: 7
+  },
+  resultsText: {
     textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
+    fontSize: 20
   },
 });
