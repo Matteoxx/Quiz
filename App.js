@@ -50,7 +50,7 @@ export default class App extends Component {
             </TouchableOpacity>
           </View>
         </ScrollView>
-      
+
       </View>
     );
   }

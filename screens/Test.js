@@ -49,12 +49,12 @@ test = [
 const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
 export default class Tests extends Component {
-  
-  
+
+
 
   constructor() {
     super();
-    
+
     this.state = {
       dataSource: ds.cloneWithRows(test)
     };
@@ -78,7 +78,7 @@ export default class Tests extends Component {
           <Text>{rowData.ans4}</Text>
         </TouchableOpacity>
 
-      </View>   
+      </View>
     );
   }
 
@@ -86,17 +86,17 @@ export default class Tests extends Component {
     return (
       <View style={styles.container}>
 
-        <ListView 
+        <ListView
         dataSource={this.state.dataSource}
         renderRow={this._renderRow}
         />
-        
+
       </View>
     );
   }
 }
 
-  
+
 
 const styles = StyleSheet.create({
   container: {

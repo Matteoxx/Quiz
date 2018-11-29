@@ -9,30 +9,30 @@ export default class Drawer extends Component {
     super();
   }
 
-  goToScreen = (screenName) => {
-    Navigation.push(this.props.componentId, {
-      component: {
-        name: screenName,
-        options: {
-          topBar: {
-            title: {
-              text: screenName
-            }
-          }
+  goToScreen = (screen) => {
+    Navigation.mergeOptions('drawerId', {
+      sideMenu: {
+        left: {
+          visible: false
         }
+      }
+    })
+    Navigation.push('MAIN_STACK',{
+      component: {
+        name: screen
       }
     })
   }
 
   render() {
     return (
-      
+
       <View style={styles.container}>
-        
+
         <TouchableOpacity style={styles.tile} onPress={()=> this.goToScreen('Test')}>
             <Text>Tests</Text>
         </TouchableOpacity>
-       
+
         <TouchableOpacity style={styles.tile} onPress={()=> this.goToScreen('Results')}>
           <Text>Results</Text>
         </TouchableOpacity>
@@ -50,15 +50,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
   },
-//   tile: {
-//     height: '10%',
-//     width: '95%',
-//     margin: 5,
-//     borderWidth: 1,
-//     borderColor: 'black',
-//     borderStyle: 'solid',
-//     backgroundColor: '#4F6D7A'
-//   },
 
-  
+
+
 });

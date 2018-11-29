@@ -15,7 +15,7 @@ const { width } = Dimensions.get('window');
 
 
 Navigation.events().registerAppLaunchedListener(() => {
- 
+
   Navigation.setRoot({
       root: {
         sideMenu: {
@@ -28,7 +28,7 @@ Navigation.events().registerAppLaunchedListener(() => {
           },
           center: {
             stack: {
-              id: 'AppStack',
+              id: 'MAIN_STACK',
               children: [
                 {
                   component: {
@@ -45,26 +45,8 @@ Navigation.events().registerAppLaunchedListener(() => {
               ]
             }
           }
-        },  
+        },
       }
   });
 
 });
-
-// Navigation.events().registerAppLaunchedListener(() => {
-//   Navigation.setRoot({
-    // root: {
-    //   stack: {
-    //     id: 'AppStack',
-    //     children: [
-    //       {
-    //         component: {
-    //           name: 'App'
-    //         }
-    //       },
-    //     ]
-    //   }
-    // }
-//   })
-
-// })
