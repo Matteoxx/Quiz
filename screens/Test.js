@@ -1,9 +1,10 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, View, ListView, TouchableOpacity} from 'react-native';
-
+import {StyleSheet, Text, View, ScrollView, TouchableOpacity} from 'react-native';
+import _ from 'lodash';
 
 test = [
   {
+    id: 1,
     question: 'Który znacznik wstawia odsyłacz do podstrony "galeria.html"?',
     ans1: '<a href="galeria">galeria</a>',
     ans2: '<a href="galeria.html">galeria</a>',
@@ -12,6 +13,7 @@ test = [
     correctAns: '<a href="galeria.html">galeria</a>',
   },
   {
+    id: 2,
     question: 'Między którymi znacznikami umieścisz tekst, który ma się pojawić na pasku tytułowym?',
     ans1: '<title> Tekst </title>',
     ans2: '<body> Tekst </body>',
@@ -20,6 +22,7 @@ test = [
     correctAns: '<title> Tekst </title>',
   },
   {
+    id: 3,
     question: 'Jakiego polecenia musimy użyć w dokumencie HTML żeby wstawić jakąś grafikę?',
     ans1: '<img src="pełna nazwa pliku graficznego">',
     ans2: '<img important="pełna nazwa pliku graficznego">',
@@ -28,6 +31,7 @@ test = [
     correctAns: '<img src="pełna nazwa pliku graficznego">',
   },
   {
+    id: 4,
     question: 'Zaznacz popularną przeglądarkę www.',
     ans1: 'Google',
     ans2: 'Internet Explorer',
@@ -36,6 +40,7 @@ test = [
     correctAns: 'Internet Explorer',
   },
   {
+    id: 5,
     question: 'Który znacznik ustala kolor tła dokumentu na czarny i kolor czcionki na żółty',
     ans1: 'WSZYSTKIE ODPOWIEDZI SĄ BŁĘDNE',
     ans2: '<BODY BACKGROUND="black" TEXT="yellow">',
@@ -46,8 +51,6 @@ test = [
 
 ]
 
-const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-
 export default class Tests extends Component {
 
 
@@ -56,42 +59,65 @@ export default class Tests extends Component {
     super();
 
     this.state = {
-      dataSource: ds.cloneWithRows(test)
+      questionNum: 1
     };
   }
 
-  _renderRow(rowData){
-    return (
-      <View style={styles.question}>
+  _renderQuestion(num){
 
-        <Text style={styles.questionText}>{rowData.question}</Text>
-        <TouchableOpacity style={styles.ansButton} >
-          <Text>{rowData.ans1}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.ansButton} >
-          <Text>{rowData.ans2}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.ansButton} >
-          <Text>{rowData.ans3}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.ansButton} >
-          <Text>{rowData.ans4}</Text>
-        </TouchableOpacity>
-
-      </View>
-    );
+    return _.map(test, function(x){
+      if(x.id == num){
+        return (
+          <View style={styles.question}>
+    
+            <Text style={styles.questionText}>{x.question}</Text>
+            <TouchableOpacity style={styles.ansButton} >
+              <Text>{x.ans1}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.ansButton} >
+              <Text>{x.ans2}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.ansButton} >
+              <Text>{x.ans3}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.ansButton} >
+              <Text>{x.ans4}</Text>
+            </TouchableOpacity>
+    
+          </View>
+        );
+      }  
+    })
+    
   }
+
+  // _changeQuestion(question){
+  //   if(question === 'previous'){
+  //     this.setState({
+  //       questionNum: this.state.questionNum - 1
+  //     })
+  //   }
+  // }
 
   render() {
     return (
-      <View style={styles.container}>
+  
+        <View style={styles.container}>
+          <View style={styles.menu}>
+            <TouchableOpacity style={styles.menuBtn} onPress={this._renderQuestion(1)}>
+              <Text style={styles.prevText}>Previous</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.menuBtn} onPress={this._renderQuestion(2)}>
+              <Text style={styles.nextText}>Next</Text>
+            </TouchableOpacity>
+          </View>
+       
+       
+          {this._renderQuestion(this.state.questionNum)}
 
-        <ListView
-        dataSource={this.state.dataSource}
-        renderRow={this._renderRow}
-        />
-
-      </View>
+        </View>
+    
+ 
     );
   }
 }
@@ -122,5 +148,23 @@ const styles = StyleSheet.create({
     borderStyle: 'solid',
     width: '95%',
     margin: 2
+  },
+  menu: {
+    flexDirection: 'row'
+  },
+  menuBtn: {
+    width: '50%',
+  },
+  prevText: {
+    textAlign: 'left',
+    paddingTop: 10,
+    paddingLeft: 10,
+    fontSize: 20
+  },
+  nextText: {
+    textAlign: 'right',
+    paddingTop: 10,
+    paddingRight: 10,
+    fontSize: 20
   }
 });

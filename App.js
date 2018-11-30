@@ -1,8 +1,14 @@
 import React, {Component} from 'react';
 import {StyleSheet, Text, View, Button, StatusBar, TouchableOpacity, ScrollView} from 'react-native';
 import {Navigation} from 'react-native-navigation';
+import SplashScreen from 'react-native-splash-screen';
+import FirstScreen from './screens/FirstScreen';
 
 export default class App extends Component {
+
+  componentDidMount() {
+    SplashScreen.hide()
+  }
 
   goToScreen = (screenName) => {
     Navigation.push(this.props.componentId, {
@@ -26,6 +32,9 @@ export default class App extends Component {
           barStyle="light-content"
           backgroundColor="#4F6D7A"
         />
+         <View>
+          <FirstScreen pagekey={"uniquekey"} title={"categort title"} description={"topic description"}/>
+         </View>
         <ScrollView>
           <TouchableOpacity style={styles.tile} onPress={()=> this.goToScreen('Test')}>
             <Text style={styles.title}>Title test #1</Text>

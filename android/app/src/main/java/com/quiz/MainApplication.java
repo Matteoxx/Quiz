@@ -2,6 +2,7 @@ package com.quiz;
 
 import android.app.Application;
 import com.facebook.react.ReactApplication;
+import org.devio.rn.splashscreen.SplashScreenReactPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
@@ -35,12 +36,19 @@ public class MainApplication extends NavigationApplication {
         return new ReactGateway(this, isDebug(), host);
     }
 
-    protected List<ReactPackage> getPackages()
-    {
-        // Add additional packages you require here
-        // No need to add RnnPackage and MainReactPackage
+//    protected List<ReactPackage> getPackages()
+//    {
+//        // Add additional packages you require here
+//        // No need to add RnnPackage and MainReactPackage
+//        return Arrays.<ReactPackage>asList(
+//            // eg. new VectorIconsPackage()
+//        );
+//    }
+
+    protected List<ReactPackage> getPackages() {
         return Arrays.<ReactPackage>asList(
-            // eg. new VectorIconsPackage()
+                new MainReactPackage(),
+                new SplashScreenReactPackage()
         );
     }
 
