@@ -134,10 +134,9 @@ export default class Test extends Component {
             </TouchableOpacity>
 
             <Text>Punkty: {this.state.points}</Text>
-
-        </View>
+            {/* dodac czas na rozwiazanie zadania */}
+          </View>
         
- 
     );
   }
 }

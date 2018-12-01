@@ -9,7 +9,7 @@ export default class Drawer extends Component {
     super();
   }
 
-  goToScreen = (screen) => {
+  goToScreen = (screenName) => {
     Navigation.mergeOptions('drawerId', {
       sideMenu: {
         left: {
@@ -19,7 +19,14 @@ export default class Drawer extends Component {
     })
     Navigation.push('MAIN_STACK',{
       component: {
-        name: screen
+        name: screenName,
+        options: {
+          topBar: {
+            title: {
+              text: screenName
+            }
+          }
+        }
       }
     })
   }
@@ -28,14 +35,33 @@ export default class Drawer extends Component {
     return (
 
       <View style={styles.container}>
+        <Text style={styles.title}>Quiz </Text>
 
-        <TouchableOpacity style={styles.tile} onPress={()=> this.goToScreen('Test')}>
-            <Text>Tests</Text>
+        <TouchableOpacity style={styles.tile} onPress={()=> this.goToScreen('App')}>
+          <Text style={styles.tileText}>Home Page</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.tile} onPress={()=> this.goToScreen('Results')}>
-          <Text>Results</Text>
+          <Text style={styles.tileText}>Results</Text>
         </TouchableOpacity>
+
+        <TouchableOpacity style={styles.tile} onPress={()=> this.goToScreen('Test')}>
+            <Text style={styles.tileText}>Test #1</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.tile} onPress={()=> this.goToScreen('Test')}>
+            <Text style={styles.tileText}>Test #2</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.tile} onPress={()=> this.goToScreen('Test')}>
+            <Text style={styles.tileText}>Test #3</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.tile} onPress={()=> this.goToScreen('Test')}>
+            <Text style={styles.tileText}>Test #4</Text>
+        </TouchableOpacity>
+
+        
 
       </View>
 
@@ -50,6 +76,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
   },
+  tile: {
+    borderWidth: 1,
+    padding: 10,
+    marginTop: 10,
+    width: '90%',
+    borderRadius: 5
+  },
+  tileText: {
+    textAlign: 'center',
+    fontSize: 22
+  },
+  title: {
+    textAlign: 'center',
+    fontSize: 48,
+    marginBottom: 20
+  }
 
 
 
