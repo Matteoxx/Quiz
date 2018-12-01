@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
 import {StyleSheet, Text, View, ScrollView, TouchableOpacity} from 'react-native';
 import _ from 'lodash';
+import {Navigation} from 'react-native-navigation';
+
 
 test = [
   {
-    id: 1,
     question: 'Który znacznik wstawia odsyłacz do podstrony "galeria.html"?',
     ans1: '<a href="galeria">galeria</a>',
     ans2: '<a href="galeria.html">galeria</a>',
@@ -13,7 +14,6 @@ test = [
     correctAns: '<a href="galeria.html">galeria</a>',
   },
   {
-    id: 2,
     question: 'Między którymi znacznikami umieścisz tekst, który ma się pojawić na pasku tytułowym?',
     ans1: '<title> Tekst </title>',
     ans2: '<body> Tekst </body>',
@@ -22,7 +22,6 @@ test = [
     correctAns: '<title> Tekst </title>',
   },
   {
-    id: 3,
     question: 'Jakiego polecenia musimy użyć w dokumencie HTML żeby wstawić jakąś grafikę?',
     ans1: '<img src="pełna nazwa pliku graficznego">',
     ans2: '<img important="pełna nazwa pliku graficznego">',
@@ -31,7 +30,6 @@ test = [
     correctAns: '<img src="pełna nazwa pliku graficznego">',
   },
   {
-    id: 4,
     question: 'Zaznacz popularną przeglądarkę www.',
     ans1: 'Google',
     ans2: 'Internet Explorer',
@@ -40,7 +38,6 @@ test = [
     correctAns: 'Internet Explorer',
   },
   {
-    id: 5,
     question: 'Który znacznik ustala kolor tła dokumentu na czarny i kolor czcionki na żółty',
     ans1: 'WSZYSTKIE ODPOWIEDZI SĄ BŁĘDNE',
     ans2: '<BODY BACKGROUND="black" TEXT="yellow">',
@@ -51,78 +48,99 @@ test = [
 
 ]
 
-export default class Tests extends Component {
+export default class Test extends Component {
 
-
-
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
 
     this.state = {
-      questionNum: 1
+      questionNum: 1,
+      question: test[0].question,
+      ans1: test[0].ans1,
+      ans2: test[0].ans2,
+      ans3: test[0].ans3,
+      ans4: test[0].ans4,
+      points: 0
     };
   }
 
-  _renderQuestion(num){
-
-    return _.map(test, function(x){
-      if(x.id == num){
-        return (
-          <View style={styles.question}>
-    
-            <Text style={styles.questionText}>{x.question}</Text>
-            <TouchableOpacity style={styles.ansButton} >
-              <Text>{x.ans1}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.ansButton} >
-              <Text>{x.ans2}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.ansButton} >
-              <Text>{x.ans3}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.ansButton} >
-              <Text>{x.ans4}</Text>
-            </TouchableOpacity>
-    
-          </View>
-        );
-      }  
+  goToScreen = (screenName) => {
+    Navigation.push(this.props.componentId, {
+      component: {
+        name: screenName,
+        options: {
+          topBar: {
+            title: {
+              text: screenName
+            }
+          }
+        }
+      }
     })
-    
   }
 
-  // _changeQuestion(question){
-  //   if(question === 'previous'){
-  //     this.setState({
-  //       questionNum: this.state.questionNum - 1
-  //     })
-  //   }
-  // }
+  _changeQuestion(num){
+
+    if(num < test.length){
+      this.setState({
+        questionNum: this.state.questionNum + 1,
+        question: test[num].question,
+        ans1: test[num].ans1,
+        ans2: test[num].ans2,
+        ans3: test[num].ans3,
+        ans4: test[num].ans4,
+      })
+    } else {
+        this.goToScreen('Result')
+    }
+  
+}
+
+  _countScore(ans){
+    console.log("answer: " + ans)
+
+    if(ans == test[this.state.questionNum - 1].correctAns){
+      this.setState({
+        points: this.state.points + 1,
+      })
+    }
+
+    this._changeQuestion(this.state.questionNum)
+  }
+
+  
 
   render() {
+   
     return (
-  
+        
         <View style={styles.container}>
-          <View style={styles.menu}>
-            <TouchableOpacity style={styles.menuBtn} onPress={this._renderQuestion(1)}>
-              <Text style={styles.prevText}>Previous</Text>
+
+            <Text style={styles.questionId}>Pytanie nr: {this.state.questionNum}</Text>
+
+            <Text style={styles.questionText}>{this.state.question}</Text>
+
+            <TouchableOpacity style={styles.ansButton} onPress={() => {this._countScore(this.state.ans1)}} >
+              <Text style={styles.ansText}>{this.state.ans1}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.menuBtn} onPress={this._renderQuestion(2)}>
-              <Text style={styles.nextText}>Next</Text>
+            <TouchableOpacity style={styles.ansButton} onPress={() => {this._countScore(this.state.ans2)}} >
+              <Text style={styles.ansText}>{this.state.ans2}</Text>
             </TouchableOpacity>
-          </View>
-       
-       
-          {this._renderQuestion(this.state.questionNum)}
+            <TouchableOpacity style={styles.ansButton} onPress={() => {this._countScore(this.state.ans3)}} >
+              <Text style={styles.ansText}>{this.state.ans3}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.ansButton} onPress={() => {this._countScore(this.state.ans4)}} >
+              <Text style={styles.ansText}>{this.state.ans4}</Text>
+            </TouchableOpacity>
+
+            <Text>Punkty: {this.state.points}</Text>
 
         </View>
-    
+        
  
     );
   }
 }
-
-
 
 const styles = StyleSheet.create({
   container: {
@@ -130,41 +148,37 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
+    padding: 10
   },
-  question: {
-    padding: 10,
-    margin: 5,
-    alignItems: 'flex-start',
-    fontSize: 20
+  questionId: {
+    fontWeight: '700',
+    textAlign: 'center',
+    fontSize: 36,
+    borderBottomWidth: 1,
+    paddingBottom: 5,
+    marginBottom: 30
   },
   questionText: {
     fontWeight: '700',
-    textAlign: 'center'
+    textAlign: 'center',
+    fontSize: 26,
+    marginBottom: 20
   },
   ansButton: {
-    padding: 5,
+    paddingTop: 15,
+    paddingBottom: 15,
+    paddingLeft: 5,
+    paddingRight: 5,
     borderWidth: 1,
     borderColor: 'black',
     borderStyle: 'solid',
     width: '95%',
-    margin: 2
+    margin: 2,   
   },
-  menu: {
-    flexDirection: 'row'
-  },
-  menuBtn: {
-    width: '50%',
-  },
-  prevText: {
-    textAlign: 'left',
-    paddingTop: 10,
-    paddingLeft: 10,
-    fontSize: 20
-  },
-  nextText: {
-    textAlign: 'right',
-    paddingTop: 10,
-    paddingRight: 10,
-    fontSize: 20
+  ansText: {
+    fontSize: 18,
+    textAlign: 'center'
   }
+
 });
+

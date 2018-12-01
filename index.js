@@ -4,13 +4,13 @@ import Results from './screens/Results';
 import Test from './screens/Test';
 import Drawer from './screens/Drawer';
 import { Dimensions } from 'react-native';
-
+import Result from './screens/Result';
 
 Navigation.registerComponent(`App`, () => App);
 Navigation.registerComponent(`Results`, () => Results);
 Navigation.registerComponent(`Test`, () => Test);
 Navigation.registerComponent(`Drawer`, () => Drawer);
-
+Navigation.registerComponent(`Result`, () => Result);
 const { width } = Dimensions.get('window');
 
 

@@ -28,10 +28,10 @@ export default class App extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <StatusBar
+        {/* <StatusBar
           barStyle="light-content"
           backgroundColor="#4F6D7A"
-        />
+        /> */}
          <View>
           <FirstScreen pagekey={"uniquekey"} title={"categort title"} description={"topic description"}/>
          </View>
@@ -70,7 +70,9 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#4F6D7A'
+    // backgroundColor: '#4F6D7A'
+    backgroundColor: 'white'
+
   },
   tile: {
     flex: 1,
