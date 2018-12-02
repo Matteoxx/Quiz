@@ -9,12 +9,9 @@ export default class Result extends Component {
   constructor(props) {
     super(props);
     
-    this.state = {
-      
-    };
+   
   
   }
- 
 
   render() {
     
@@ -23,7 +20,9 @@ export default class Result extends Component {
       
         <View style={styles.container}>
           
-          <Text >Twoj wynik to:  </Text>
+          <View>
+            
+          </View>
             
         </View>
  
@@ -36,8 +35,11 @@ export default class Result extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
+  },
+  resultText: {
+    fontSize: 48
   }
 });

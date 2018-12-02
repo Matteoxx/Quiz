@@ -3,6 +3,7 @@ import {StyleSheet, Text, View, Button, StatusBar, TouchableOpacity, ScrollView}
 import {Navigation} from 'react-native-navigation';
 import SplashScreen from 'react-native-splash-screen';
 import FirstScreen from './screens/FirstScreen';
+import LinearGradient from 'react-native-linear-gradient';
 
 export default class App extends Component {
 
@@ -27,11 +28,13 @@ export default class App extends Component {
 
   render() {
     return (
+      // <LinearGradient colors={['#fbc2eb','#a6c1ee']} style={styles.linearGradient}>
+      // <LinearGradient colors={['#84fab0','#8fd3f4']} style={styles.linearGradient}>
+      <LinearGradient colors={['#A6fcd2','#Afd5f6']} style={styles.linearGradient}>
+
+
       <View style={styles.container}>
-        {/* <StatusBar
-          barStyle="light-content"
-          backgroundColor="#4F6D7A"
-        /> */}
+  
          <View>
           <FirstScreen pagekey={"uniquekey"} title={"categort title"} description={"topic description"}/>
          </View>
@@ -59,19 +62,21 @@ export default class App extends Component {
             </TouchableOpacity>
           </View>
         </ScrollView>
-
+        
       </View>
+      </LinearGradient>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  linearGradient: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    // backgroundColor: '#4F6D7A'
-    backgroundColor: 'white'
 
   },
   tile: {

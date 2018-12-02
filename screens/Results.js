@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {StyleSheet, Text, View, ListView, RefreshControl} from 'react-native';
-
+import LinearGradient from 'react-native-linear-gradient';
 results = [
   {
     nick: 'Marek',
@@ -48,17 +48,20 @@ export default class Results extends Component {
 
   _renderRow(rowData){
     return (
+      
       <View style={styles.row}>
         <View style={styles.col}><Text style={styles.text}>{rowData.nick}</Text></View>
         <View style={styles.col}><Text style={styles.text}>{rowData.score}/{rowData.total}</Text></View>
         <View style={styles.col}><Text style={styles.text}>{rowData.type}</Text></View>
         <View style={styles.col}><Text style={styles.text}>{rowData.date}</Text></View>
       </View>   
+      
     );
   }
 
   render() {
     return (
+      <LinearGradient colors={['#fbc2eb','#a6c1ee']} style={styles.linearGradient}>
       <View style={styles.container}>
         <ListView 
         style={styles.table} 
@@ -72,16 +75,19 @@ export default class Results extends Component {
         }
         />
       </View>
+      </LinearGradient>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  linearGradient: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
   },
   row: {
     flex: 1,

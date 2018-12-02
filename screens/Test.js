@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {StyleSheet, Text, View, ScrollView, TouchableOpacity} from 'react-native';
 import _ from 'lodash';
 import {Navigation} from 'react-native-navigation';
+import LinearGradient from 'react-native-linear-gradient';
 
 
 test = [
@@ -50,6 +51,8 @@ test = [
 
 export default class Test extends Component {
 
+  
+
   constructor(props) {
     super(props);
 
@@ -79,6 +82,8 @@ export default class Test extends Component {
     })
   }
 
+
+
   _changeQuestion(num){
 
     if(num < test.length){
@@ -92,6 +97,7 @@ export default class Test extends Component {
       })
     } else {
         this.goToScreen('Result')
+        
     }
   
 }
@@ -113,6 +119,7 @@ export default class Test extends Component {
   render() {
    
     return (
+      <LinearGradient colors={['#fbc2eb','#a6c1ee']} style={styles.linearGradient}>
         
         <View style={styles.container}>
 
@@ -135,18 +142,21 @@ export default class Test extends Component {
 
             <Text>Punkty: {this.state.points}</Text>
             {/* dodac czas na rozwiazanie zadania */}
+            
           </View>
-        
+      </LinearGradient>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  linearGradient: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
     padding: 10
   },
   questionId: {
