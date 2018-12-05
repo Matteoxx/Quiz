@@ -28,8 +28,7 @@ export default class App extends Component {
 
   render() {
     return (
-      // <LinearGradient colors={['#fbc2eb','#a6c1ee']} style={styles.linearGradient}>
-      // <LinearGradient colors={['#84fab0','#8fd3f4']} style={styles.linearGradient}>
+
       <LinearGradient colors={['#A6fcd2','#Afd5f6']} style={styles.linearGradient}>
 
 
@@ -76,22 +75,25 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'center'
 
   },
   tile: {
     flex: 1,
     margin: 15,
-    padding: 10,
+    padding: 15,
     borderWidth: 1,
     borderColor: 'black',
     borderStyle: 'solid'
   },
   title: {
-    fontSize: 24
+    fontSize: 24,
+    fontFamily: 'Lato-Bold',
+    marginBottom: 10
   },
   desc: {
-    fontSize: 16
+    fontSize: 16,
+    fontFamily: 'Lato-Regular'
   },
   results: {
     padding: 10,

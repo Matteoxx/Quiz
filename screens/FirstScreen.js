@@ -77,15 +77,16 @@ export default class FirstScreen extends Component {
         padding: 15
       },
       title:{
-        fontWeight:'bold',
         fontSize: 26,
         textAlign:'center',
         borderBottomWidth: 1,
-        paddingBottom: 5
+        paddingBottom: 5,
+        fontFamily: 'Lato-Bold'
       },
       description:{
         fontSize: 16,
-        textAlign: 'justify'
+        textAlign: 'justify',
+        fontFamily: 'Lato-Regular'
       },
 
       accBtn:{

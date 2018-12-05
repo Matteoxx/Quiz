@@ -87,11 +87,13 @@ const styles = StyleSheet.create({
   tileText: {
     textAlign: 'center',
     fontSize: 22,
+    fontFamily: 'Lato-Bold'
   },
   title: {
     textAlign: 'center',
     fontSize: 48,
-    marginBottom: 20
+    marginBottom: 20,
+    fontFamily: 'BreeSerif-Regular'
   }
 
 

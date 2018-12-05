@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
     padding: 10
   },
   questionId: {
-    fontWeight: '700',
+    fontFamily: 'Lato-Bold',
     textAlign: 'center',
     fontSize: 36,
     borderBottomWidth: 1,
@@ -168,10 +168,10 @@ const styles = StyleSheet.create({
     marginBottom: 30
   },
   questionText: {
-    fontWeight: '700',
     textAlign: 'center',
     fontSize: 26,
-    marginBottom: 20
+    marginBottom: 20,
+    fontFamily: 'Lato-Bold'
   },
   ansButton: {
     paddingTop: 15,

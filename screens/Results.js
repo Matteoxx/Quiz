@@ -100,7 +100,10 @@ const styles = StyleSheet.create({
     width: '25%'
   },
   text: {
-    textAlign: 'center'
+    textAlign: 'center',
+    paddingTop: 10,
+    paddingBottom: 10,
+    fontFamily: 'Lato-Regular'
   }
 
   
