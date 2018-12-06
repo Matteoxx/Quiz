@@ -81,6 +81,9 @@ export default class Test extends Component {
               text: screenName
             }
           }
+        },
+        passProps: {
+          points: this.state.points
         }
       }
     })

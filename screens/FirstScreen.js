@@ -10,7 +10,7 @@ export default class FirstScreen extends Component {
           modalVisible: false
         };
       }
-     
+
       componentDidMount = async () => {
         try {
           const value = await AsyncStorage.getItem('termsOfUseAccepted');
@@ -20,11 +20,11 @@ export default class FirstScreen extends Component {
           await AsyncStorage.setItem('termsOfUseAccepted', JSON.stringify({"value":"true"}));
         } catch (error) {}
       }
-    
+
       setModalVisible(visible) {
         this.setState({ modalVisible: visible });
       }
-    
+
       render() {
         return (
           <View>
@@ -41,25 +41,25 @@ export default class FirstScreen extends Component {
 
                 <Text style={styles.title}>Regulamin aplikacji</Text>
                 <Text style={styles.description}>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. In quis sapien pharetra, porttitor eros ut, pellentesque ex. 
-                    Nunc tincidunt tempus ex, non hendrerit justo auctor vitae. Aliquam dignissim, libero eu ullamcorper dictum, nibh risus hendrerit nisl, 
-                    et tincidunt odio justo ut dolor. Morbi malesuada cursus dui ut laoreet. Cras laoreet feugiat imperdiet. 
-                    Praesent fermentum purus quis metus tincidunt vestibulum. Nullam sit amet facilisis elit. 
-                    Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. 
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. In quis sapien pharetra, porttitor eros ut, pellentesque ex.
+                    Nunc tincidunt tempus ex, non hendrerit justo auctor vitae. Aliquam dignissim, libero eu ullamcorper dictum, nibh risus hendrerit nisl,
+                    et tincidunt odio justo ut dolor. Morbi malesuada cursus dui ut laoreet. Cras laoreet feugiat imperdiet.
+                    Praesent fermentum purus quis metus tincidunt vestibulum. Nullam sit amet facilisis elit.
+                    Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.
                     Fusce sollicitudin vitae mauris sit amet imperdiet.
                 </Text>
-             
+
                   <TouchableHighlight style={styles.accBtn} onPress={() => {this.setModalVisible(false)}}>
-                      <Text style={styles.accBtnText}>Akceptuję</Text>     
+                      <Text style={styles.accBtnText}>Akceptuję</Text>
                   </TouchableHighlight>
-                  
+
               </View>
             </Modal>
           </View>
         );
       }
     }
-    
+
     const styles = StyleSheet.create({
       container:{
         backgroundColor: '#FDC047',
@@ -103,4 +103,3 @@ export default class FirstScreen extends Component {
         textAlign:'center'
       }
     });
-    
