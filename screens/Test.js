@@ -3,7 +3,11 @@ import {StyleSheet, Text, View, ScrollView, TouchableOpacity} from 'react-native
 import _ from 'lodash';
 import {Navigation} from 'react-native-navigation';
 import LinearGradient from 'react-native-linear-gradient';
+import SQLite from 'react-native-sqlite-storage';
 
+// var SQLite = require('react-native-sqlite-storage')
+let DB;
+const getDB = () => DB ? DB :DB = SQLite.openDatabase({name: 'md.db', createFromLocation: 1});
 
 test = [
   {
@@ -51,7 +55,7 @@ test = [
 
 export default class Test extends Component {
 
-  
+
 
   constructor(props) {
     super(props);
@@ -97,9 +101,9 @@ export default class Test extends Component {
       })
     } else {
         this.goToScreen('Result')
-        
+
     }
-  
+
 }
 
   _countScore(ans){
@@ -114,13 +118,13 @@ export default class Test extends Component {
     this._changeQuestion(this.state.questionNum)
   }
 
-  
+
 
   render() {
-   
+
     return (
       <LinearGradient colors={['#fbc2eb','#a6c1ee']} style={styles.linearGradient}>
-        
+
         <View style={styles.container}>
 
             <Text style={styles.questionId}>Pytanie nr: {this.state.questionNum}</Text>
@@ -142,7 +146,7 @@ export default class Test extends Component {
 
             <Text>Punkty: {this.state.points}</Text>
             {/* dodac czas na rozwiazanie zadania */}
-            
+
           </View>
       </LinearGradient>
     );
@@ -182,7 +186,7 @@ const styles = StyleSheet.create({
     borderColor: 'black',
     borderStyle: 'solid',
     width: '95%',
-    margin: 2,   
+    margin: 2,
   },
   ansText: {
     fontSize: 18,
@@ -190,4 +194,3 @@ const styles = StyleSheet.create({
   }
 
 });
-
