@@ -1,29 +1,30 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, View, ListView, RefreshControl} from 'react-native';
+import {StyleSheet, Text, View, ListView, RefreshControl, ActivityIndicator} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-results = [
-  {
-    nick: 'Marek',
-    score: 18,
-    total: 20,
-    type: 'historia',
-    date: '2018-11-12'
-  },
-  {
-    nick: 'Adam',
-    score: 28,
-    total: 30,
-    type: 'matematyka',
-    date: '2018-11-18'
-  },
-  {
-    nick: 'Marcin',
-    score: 16,
-    total: 25,
-    type: 'biologia',
-    date: '2018-11-22'
-  },
-]
+
+// results = [
+//   {
+//     nick: 'Marek',
+//     score: 18,
+//     total: 20,
+//     type: 'historia',
+//     date: '2018-11-12'
+//   },
+//   {
+//     nick: 'Adam',
+//     score: 28,
+//     total: 30,
+//     type: 'matematyka',
+//     date: '2018-11-18'
+//   },
+//   {
+//     nick: 'Marcin',
+//     score: 16,
+//     total: 25,
+//     type: 'biologia',
+//     date: '2018-11-22'
+//   },
+// ]
 
 const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
@@ -33,8 +34,9 @@ export default class Results extends Component {
     super();
     
     this.state = {
-      dataSource: ds.cloneWithRows(results),
-      refreshing: false
+      // dataSource: ds.cloneWithRows(''),
+      refreshing: false,
+      isLoading: true
     };
   }
 
@@ -45,6 +47,24 @@ export default class Results extends Component {
     });
   }
 
+  componentDidMount(){
+    return fetch('https://pwsz-quiz-api.herokuapp.com/api/results')
+      .then((response) => response.json())
+      .then((responseJson) => {
+      
+        console.log(responseJson)
+        this.setState({
+          isLoading: false,
+          dataSource: ds.cloneWithRows(responseJson)
+        }, function(){
+
+        });
+
+      })
+      .catch((error) =>{
+        console.error(error);
+      });
+  }
 
   _renderRow(rowData){
     return (
@@ -60,6 +80,15 @@ export default class Results extends Component {
   }
 
   render() {
+
+    if(this.state.isLoading){
+      return(
+        <View style={{flex: 1, padding: 20}}>
+          <ActivityIndicator/>
+        </View>
+      )
+    }
+
     return (
       <LinearGradient colors={['#fbc2eb','#a6c1ee']} style={styles.linearGradient}>
       <View style={styles.container}>

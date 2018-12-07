@@ -5,7 +5,6 @@ import {Navigation} from 'react-native-navigation';
 import LinearGradient from 'react-native-linear-gradient';
 import SQLite from 'react-native-sqlite-storage';
 
-// var SQLite = require('react-native-sqlite-storage')
 let DB;
 const getDB = () => DB ? DB :DB = SQLite.openDatabase({name: 'md.db', createFromLocation: 1});
 

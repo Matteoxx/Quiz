@@ -1,13 +1,34 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import _ from 'lodash';
 import {Navigation} from 'react-native-navigation';
 import LinearGradient from 'react-native-linear-gradient';
+
+let payload = {
+  "nick": "Jan",
+  "score": 5,
+  "total": 20,
+  "type": "historia",
+  "date": "2018-12-01"
+}
 
 export default class Result extends Component {
 
   constructor(props) {
     super(props);
+  }
+
+
+  _sendResult(res){
+    console.log(res)
+    fetch('https://pwsz-quiz-api.herokuapp.com/api/result', {
+      method: 'POST',
+      // headers: {
+      //   Accept: 'application/json',
+      //   'Content-Type': 'application/json',
+      // },
+      body: JSON.stringify(res),
+    });
   }
 
   render() {
@@ -17,10 +38,12 @@ export default class Result extends Component {
         <LinearGradient colors={['#fbc2eb','#a6c1ee']} style={styles.linearGradient}>
           <View style={styles.container}>
 
-            <View>
-              <Text style={styles.resultText}>Twój wynik to: </Text>
-              <Text style={styles.resultText2}>{this.props.points} punkty</Text>
-            </View>
+            <Text style={styles.resultText}>Twój wynik to: </Text>
+            <Text style={styles.resultText2}>{this.props.points} punkty</Text>
+            <TouchableOpacity style={styles.saveBtn} onPress={()=>this._sendResult(payload)}>
+              <Text style={styles.saveBtnTxt}>Save result</Text>
+            </TouchableOpacity>
+            
 
           </View>
         </LinearGradient>
@@ -48,6 +71,16 @@ const styles = StyleSheet.create({
     marginTop: 30,
     fontSize: 32,
     fontFamily: 'Lato-Regular',
+    textAlign: 'center'
+  },
+  saveBtn: {
+    borderWidth: 1,
+    width: '40%',
+    padding: 10,
+    marginTop: 20,
+  },
+  saveBtnTxt: {
+    fontSize: 18,
     textAlign: 'center'
   }
 });
