@@ -2,30 +2,6 @@ import React, {Component} from 'react';
 import {StyleSheet, Text, View, ListView, RefreshControl, ActivityIndicator} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
-// results = [
-//   {
-//     nick: 'Marek',
-//     score: 18,
-//     total: 20,
-//     type: 'historia',
-//     date: '2018-11-12'
-//   },
-//   {
-//     nick: 'Adam',
-//     score: 28,
-//     total: 30,
-//     type: 'matematyka',
-//     date: '2018-11-18'
-//   },
-//   {
-//     nick: 'Marcin',
-//     score: 16,
-//     total: 25,
-//     type: 'biologia',
-//     date: '2018-11-22'
-//   },
-// ]
-
 const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
 export default class Results extends Component {
@@ -34,7 +10,6 @@ export default class Results extends Component {
     super();
     
     this.state = {
-      // dataSource: ds.cloneWithRows(''),
       refreshing: false,
       isLoading: true
     };
@@ -52,12 +27,9 @@ export default class Results extends Component {
       .then((response) => response.json())
       .then((responseJson) => {
       
-        console.log(responseJson)
         this.setState({
           isLoading: false,
           dataSource: ds.cloneWithRows(responseJson)
-        }, function(){
-
         });
 
       })

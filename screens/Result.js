@@ -12,6 +12,8 @@ let payload = {
   "date": "2018-12-01"
 }
 
+// pobrac dane z rozwiazanego testu i zapisac w obiekcie
+
 export default class Result extends Component {
 
   constructor(props) {
@@ -20,15 +22,12 @@ export default class Result extends Component {
 
 
   _sendResult(res){
-    console.log(res)
+
     fetch('https://pwsz-quiz-api.herokuapp.com/api/result', {
       method: 'POST',
-      // headers: {
-      //   Accept: 'application/json',
-      //   'Content-Type': 'application/json',
-      // },
       body: JSON.stringify(res),
     });
+
   }
 
   render() {

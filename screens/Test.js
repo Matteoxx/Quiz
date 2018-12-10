@@ -3,71 +3,61 @@ import {StyleSheet, Text, View, ScrollView, TouchableOpacity} from 'react-native
 import _ from 'lodash';
 import {Navigation} from 'react-native-navigation';
 import LinearGradient from 'react-native-linear-gradient';
-import SQLite from 'react-native-sqlite-storage';
-
-let DB;
-const getDB = () => DB ? DB :DB = SQLite.openDatabase({name: 'md.db', createFromLocation: 1});
-
-test = [
-  {
-    question: 'Który znacznik wstawia odsyłacz do podstrony "galeria.html"?',
-    ans1: '<a href="galeria">galeria</a>',
-    ans2: '<a href="galeria.html">galeria</a>',
-    ans3: '<a href="galeria.php">galeria"</a>',
-    ans4: '<a href="http://www.galeria.html">galeria</a>',
-    correctAns: '<a href="galeria.html">galeria</a>',
-  },
-  {
-    question: 'Między którymi znacznikami umieścisz tekst, który ma się pojawić na pasku tytułowym?',
-    ans1: '<title> Tekst </title>',
-    ans2: '<body> Tekst </body>',
-    ans3: '<author> Tekst </author>',
-    ans4: '<head> Tekst </head>',
-    correctAns: '<title> Tekst </title>',
-  },
-  {
-    question: 'Jakiego polecenia musimy użyć w dokumencie HTML żeby wstawić jakąś grafikę?',
-    ans1: '<img src="pełna nazwa pliku graficznego">',
-    ans2: '<img important="pełna nazwa pliku graficznego">',
-    ans3: '<import img="pełna nazwa pliku graficznego">',
-    ans4: '<insert img="pełna nazwa pliku graficznego">',
-    correctAns: '<img src="pełna nazwa pliku graficznego">',
-  },
-  {
-    question: 'Zaznacz popularną przeglądarkę www.',
-    ans1: 'Google',
-    ans2: 'Internet Explorer',
-    ans3: 'Outlook Express',
-    ans4: 'Nasza Klasa',
-    correctAns: 'Internet Explorer',
-  },
-  {
-    question: 'Który znacznik ustala kolor tła dokumentu na czarny i kolor czcionki na żółty',
-    ans1: 'WSZYSTKIE ODPOWIEDZI SĄ BŁĘDNE',
-    ans2: '<BODY BACKGROUND="black" TEXT="yellow">',
-    ans3: '<BODY BGCOLOR="black" TEXT="yellow">',
-    ans4: '<BODY BACKGROUND="black" FONTCOLOR="yellow">',
-    correctAns: '<BODY BGCOLOR="black" TEXT="yellow">',
-  }
-
-]
+import SQLite from 'react-native-sqlite-storage'
+ 
+var db = SQLite.openDatabase({name: 'mb.db', createFromLocation: '~www/md.db'});
 
 export default class Test extends Component {
-
-
 
   constructor(props) {
     super(props);
 
     this.state = {
-      questionNum: 1,
-      question: test[0].question,
-      ans1: test[0].ans1,
-      ans2: test[0].ans2,
-      ans3: test[0].ans3,
-      ans4: test[0].ans4,
-      points: 0
+      questionId: 1,
+      question: '',
+      ans1: '',
+      ans2: '',
+      ans3: '',
+      ans4: '',
+      ans5: '',
+      corrAns: '',
+      numberOfTasks: this.props.numberOfTasks,
+      points: 0,
     };
+    
+  }
+
+  _selectData(testName,rowId){
+    db.transaction((tx) => {
+     
+      tx.executeSql(`SELECT * FROM ${testName}`,[], (tx, results) => {
+          var len = results.rows.length;
+          if(len > 0) {
+            var row = results.rows.item(rowId - 1);
+            console.log(row)
+            this.setState({
+              question: row.question,
+              ans1: row.ans1,
+              ans2: row.ans2,
+              ans3: row.ans3,
+              ans4: row.ans4,
+              ans5: row.ans5,
+              corrAns: row.corrAns
+            });
+          }
+          console.log("question: ", this.state.question)
+          console.log("ans1: ", this.state.ans1)
+          console.log("ans2: ", this.state.ans2)
+          console.log("ans3: ", this.state.ans3)
+          console.log("ans4: ", this.state.ans4)
+          console.log("ans5: ", this.state.ans5)
+          
+      });
+    });
+  }
+
+  componentDidMount(){
+    this._selectData(this.props.testToSolve, this.state.questionId);
   }
 
   goToScreen = (screenName) => {
@@ -90,34 +80,31 @@ export default class Test extends Component {
 
 
 
-  _changeQuestion(num){
+  _changeQuestion(){
 
-    if(num < test.length){
+    if(this.state.questionId < this.state.numberOfTasks){
       this.setState({
-        questionNum: this.state.questionNum + 1,
-        question: test[num].question,
-        ans1: test[num].ans1,
-        ans2: test[num].ans2,
-        ans3: test[num].ans3,
-        ans4: test[num].ans4,
+        questionId: ++this.state.questionId 
       })
+      console.log("questionId: ", this.state.questionId)
+      this._selectData(this.props.testToSolve, this.state.questionId);
     } else {
         this.goToScreen('Result')
-
     }
 
 }
 
   _countScore(ans){
+    
     console.log("answer: " + ans)
 
-    if(ans == test[this.state.questionNum - 1].correctAns){
+    if(ans == this.state.corrAns){
       this.setState({
         points: this.state.points + 1,
       })
     }
 
-    this._changeQuestion(this.state.questionNum)
+    this._changeQuestion()
   }
 
 
@@ -125,11 +112,12 @@ export default class Test extends Component {
   render() {
 
     return (
+      <ScrollView>
       <LinearGradient colors={['#fbc2eb','#a6c1ee']} style={styles.linearGradient}>
 
         <View style={styles.container}>
 
-            <Text style={styles.questionId}>Pytanie nr: {this.state.questionNum}</Text>
+            <Text style={styles.questionId}>Pytanie nr: {this.state.questionId}</Text>
 
             <Text style={styles.questionText}>{this.state.question}</Text>
 
@@ -145,12 +133,17 @@ export default class Test extends Component {
             <TouchableOpacity style={styles.ansButton} onPress={() => {this._countScore(this.state.ans4)}} >
               <Text style={styles.ansText}>{this.state.ans4}</Text>
             </TouchableOpacity>
+            <TouchableOpacity style={styles.ansButton} onPress={() => {this._countScore(this.state.ans5)}} >
+              <Text style={styles.ansText}>{this.state.ans5}</Text>
+            </TouchableOpacity>
 
             <Text>Punkty: {this.state.points}</Text>
+            <Text>Nazwa testu do rozwiazania: {this.props.testToSolve}</Text> 
             {/* dodac czas na rozwiazanie zadania */}
 
           </View>
       </LinearGradient>
+      </ScrollView>
     );
   }
 }
@@ -168,14 +161,14 @@ const styles = StyleSheet.create({
   questionId: {
     fontFamily: 'Lato-Bold',
     textAlign: 'center',
-    fontSize: 36,
+    fontSize: 32,
     borderBottomWidth: 1,
     paddingBottom: 5,
     marginBottom: 30
   },
   questionText: {
     textAlign: 'center',
-    fontSize: 26,
+    fontSize: 22,
     marginBottom: 20,
     fontFamily: 'Lato-Bold'
   },
