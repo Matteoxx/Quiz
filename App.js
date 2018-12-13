@@ -1,13 +1,13 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, View, Button, StatusBar, TouchableOpacity, ScrollView} from 'react-native';
+import {AsyncStorage, StyleSheet, Text, View, Button, StatusBar, TouchableOpacity, ScrollView} from 'react-native';
 import {Navigation} from 'react-native-navigation';
 import SplashScreen from 'react-native-splash-screen';
 import FirstScreen from './screens/FirstScreen';
 import LinearGradient from 'react-native-linear-gradient';
 import _ from 'lodash';
-import SQLite from 'react-native-sqlite-storage'
+import SQLite from 'react-native-sqlite-storage';
  
-var db = SQLite.openDatabase({name: 'mb.db', createFromLocation: '~www/md.db'});
+var db = SQLite.openDatabase({name: 'md.db', createFromLocation: '~www/md.db'});
 
 export default class App extends Component {
 
@@ -15,49 +15,45 @@ export default class App extends Component {
     super(props);
 
     this.state = {
-      isLoading: true,
-      tests: [],
-      testsNames: []
+      isLoading: true
     }
 
 
   }
 
-  _deleteData(){
-    let query = `DELETE FROM Zagadkimatematyczne`
-    db.executeSql(query)
-    query = `DELETE FROM WodzowieidowódcystarożytnegoRzymu`
-    db.executeSql(query)
-    query = `DELETE FROM Modanasukces`
-    db.executeSql(query)
-    query = `DELETE FROM Tranzystorbipolarnyipolowy`
-    db.executeSql(query)
+  _downloadData(){
+    fetch("https://pwsz-quiz-api.herokuapp.com/api/tests")
+    .then((response) => response.json())
+    .then((responseJson) => {
+      
+        this.setState({
+            isLoading: false,
+            tests: responseJson
+        })    
+        
+        this._insertDataToDatabase();
+    });
   }
-  
-  _saveDataFromJson(){
-    return _.map(this.state.tests, function(test){
-   
-        //pobieranie szczegolow testu po id
+
+  _insertDataToDatabase(){
+
+    db.transaction((tx) => {
+      tx.executeSql('DROP table tests');
+    });
+    db.transaction((tx) => {
+      tx.executeSql(`CREATE TABLE 'tests' ( 'id' TEXT, 'name' TEXT, 'numberOfTasks' TEXT, 'question' TEXT, 'corrAns' TEXT, 'ans1' TEXT, 'ans2' TEXT, 'ans3' TEXT, 'ans4' TEXT, 'ans5' TEXT )`);
+    });
+    
+    _.map(this.state.tests, function(test){
+
         fetch("https://pwsz-quiz-api.herokuapp.com/api/test/" + test.id)
           .then((response) => response.json())
             .then((testJson) => {
-              
-         
-              // console.log("wyswietlenie szczegolow danego testu: ", testJson);
-              // console.log(testJson.tasks)
-              
-             
-              return _.map(testJson.tasks, function(task){
 
-                //zmiana nazw tabel, aby wprowadzic do nich dane
-                let testName = testJson.name;
-                let newTestName = testName.replace(/\s/g,'');
-                // console.log(newTestName)
-                
+              _.map(testJson.tasks, function(task){
+
                 task.question = task.question.replace(/\'/g,'"');
-                // console.log(task.question)
-                // poprawic jeszcze apostrofy i cudzysłowys
-                //sprawdzenie poprawnej odpowiedzi i pozbycie sie apostrofa
+       
                 let corrAns = '';
                 _.filter(task.answers, function(ans){
                   ans.content = ans.content.replace("'","\"")
@@ -69,12 +65,10 @@ export default class App extends Component {
 
                   }
                 })
-                // console.log(corrAns)
-                //query do uzupelnienia
-                let query = `INSERT INTO '${newTestName}' (question, corrAns, ans1, ans2, ans3, ans4, ans5) VALUES ('${task.question}','${corrAns}'`
 
-                const columnsTotal = 7;
-                let columnsAdded = 2;
+                let query = `INSERT INTO tests (id, name, numberOfTasks, question, corrAns, ans1, ans2, ans3, ans4, ans5) VALUES ('${testJson.id}','${testJson.name}','${test.numberOfTasks}','${task.question}','${corrAns}'`
+                const columnsTotal = 10;
+                let columnsAdded = 5;
                 _.map(task.answers, function(ans){
                   query = query + ", '" + ans.content + "' "
                   columnsAdded++
@@ -86,73 +80,25 @@ export default class App extends Component {
                 query = query + ")"
 
                 db.executeSql(query);
-
               
               })
 
             }
             
         );
-        // this.setState({
-        //   testsNames: nazwytestow
-        // })
-        
     })
+
   }
 
-  _selectDataFromTable(){
-    db.transaction((tx) => {
-     
-      tx.executeSql('SELECT * FROM Zagadkimatematyczne',[], (tx, results) => {
-          var len = results.rows.length;
-          console.log("dlugosc: ", len)
-          console.log(results.rows.item(0))
-          console.log(results.rows.item(1))
-          console.log(results.rows.item(2))
-          console.log(results.rows.item(3))
-          console.log(results.rows.item(4))
-          console.log(results.rows.item(5))
-          console.log(results.rows.item(6))
-          console.log(results.rows.item(7))
-          console.log(results.rows.item(8))
-          console.log(results.rows.item(9))
-          console.log(results.rows.item(10))
-          console.log(results.rows.item(11))
-          console.log(results.rows.item(12))
-          console.log(results.rows.item(13))
-          console.log(results.rows.item(14))
-          console.log(results.rows.item(15))
+  async componentDidMount() {
 
-      });
-    });
-  }
-
-  componentDidMount() {
     SplashScreen.hide();
     
-    // this._deleteData();
- 
-    fetch("https://pwsz-quiz-api.herokuapp.com/api/tests")
-    .then((response) => response.json())
-    .then((responseJson) => {
-      
-        this.setState({
-            isLoading: false,
-            tests: responseJson
-        })
-      
-        // this._saveDataFromJson();
-        // this._selectDataFromTable();
-        
-    });
-
-    
-   
-    
+    this._downloadData();
 
   }
 
-  goToTestScreen = (screenName, testName, numberOfTasks) => {
+  goToTestScreen = (screenName, testName, testId, numberOfTasks) => {
     Navigation.push(this.props.componentId, {
       component: {
         name: screenName,
@@ -164,8 +110,25 @@ export default class App extends Component {
           }
         },
         passProps: {
-          testToSolve: testName,
+          testToSolveName: testName,
+          testToSolveId: testId,
           numberOfTasks: numberOfTasks 
+        }
+      }
+    })
+  }
+
+  
+  goToScreen = (screenName) => {
+    Navigation.push(this.props.componentId, {
+      component: {
+        name: screenName,
+        options: {
+          topBar: {
+            title: {
+              text: screenName
+            }
+          }
         }
       }
     })
@@ -174,7 +137,7 @@ export default class App extends Component {
   _renderTests(){
     return _.map(this.state.tests, test => {
       return (
-        <TouchableOpacity style={styles.tile} onPress={()=>this.goToTestScreen('Test', test.name.replace(/\s/g,''), test.numberOfTasks)}>
+        <TouchableOpacity style={styles.tile} onPress={()=>this.goToTestScreen('Test', test.name, test.id, test.numberOfTasks)}>
           <Text style={styles.title}>{test.name}</Text>
           <Text style={{color: 'blue'}}>
             {_.map(test.tags, y => {
@@ -187,54 +150,35 @@ export default class App extends Component {
         </TouchableOpacity>
       )
     })
-  
   }
 
   
   render() {
+
     return (
 
       <LinearGradient colors={['#A6fcd2','#Afd5f6']} style={styles.linearGradient}>
 
-
-      <View style={styles.container}>
-  
-        <View>
-          <FirstScreen pagekey={"uniquekey"} title={"categort title"} description={"topic description"}/>
-        </View>
-        <ScrollView>
-
-          {this._renderTests()}
- 
-
-
-          {/* <TouchableOpacity style={styles.tile} onPress={()=> this.goToScreen('Test')}>
-            <Text style={styles.title}>Title test #1</Text>
-            <Text style={styles.desc}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam congue accumsan ...</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.tile} onPress={()=> this.goToScreen('Test')}>
-            <Text style={styles.title}>Title test #2</Text>
-            <Text style={styles.desc}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam congue accumsan ...</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.tile} onPress={()=> this.goToScreen('Test')}>
-            <Text style={styles.title}>Title test #3</Text>
-            <Text style={styles.desc}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam congue accumsan ...</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.tile} onPress={()=> this.goToScreen('Test')}>
-            <Text style={styles.title}>Title test #4</Text>
-            <Text style={styles.desc}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam congue accumsan ...</Text>
-          </TouchableOpacity> */}
-          <View style={styles.results}>
-            <Text style={styles.resultsText}>Get to know your ranking results</Text>
-            <TouchableOpacity style={styles.btn} onPress={()=> this.goToScreen('Results')}>
-              <Text style={styles.resultsText}>Check</Text>
-            </TouchableOpacity>
+        <View style={styles.container}>
+    
+          <View>
+            <FirstScreen pagekey={"uniquekey"} title={"categort title"} description={"topic description"}/>
           </View>
+          <ScrollView>
 
+            {this._renderTests()}
+  
+            <View style={styles.results}>
+              <Text style={styles.resultsText}>Get to know your ranking results</Text>
+              <TouchableOpacity style={styles.btn} onPress={()=> this.goToScreen('Results')}>
+                <Text style={styles.resultsText}>Check</Text>
+              </TouchableOpacity>
+            </View>
+
+            
+          </ScrollView>
           
-        </ScrollView>
-        
-      </View>
+        </View>
       </LinearGradient>
     );
   }

@@ -1,15 +1,42 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import {AsyncStorage, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import { Navigation} from 'react-native-navigation';
 import LinearGradient from 'react-native-linear-gradient';
+import _ from 'lodash';
+import SQLite from 'react-native-sqlite-storage'
+ 
+var db = SQLite.openDatabase({name: 'md.db', createFromLocation: '~www/md.db'});
 
 export default class Drawer extends Component {
-
+  
   constructor() {
     super();
+
+    this.state = {
+      dane: []
+    }
+
   }
 
-  goToScreen = (screenName) => {
+  downloadDataFromDatabase = (db) => {
+    db.transaction((tx) => {
+     
+      tx.executeSql('SELECT DISTINCT id, name, numberOfTasks FROM tests',[], (tx, results) => {
+        var daneDoTestow = [];
+        for(let i = 0; i < results.rows.length; i++){
+            daneDoTestow[i] = results.rows.item(i)
+        }  
+        this.setState({dane: daneDoTestow});
+      })
+
+    })
+  }
+
+  componentDidMount() {
+    this.downloadDataFromDatabase(db);
+  }  
+
+  goToScreen = (screenName, testName, testId, numberOfTasks) => {
     Navigation.mergeOptions('drawerId', {
       sideMenu: {
         left: {
@@ -26,14 +53,30 @@ export default class Drawer extends Component {
               text: screenName
             }
           }
+        },
+        passProps: {
+          testToSolveName: testName,
+          testToSolveId: testId,
+          numberOfTasks: numberOfTasks 
         }
       }
     })
   }
 
+
+
   render() {
+
+        let rows = [];
+        for (let i = 0; i < this.state.dane.length; i++) {
+            rows.push(
+              <TouchableOpacity style={styles.tile} onPress={()=> this.goToScreen('Test', this.state.dane[i].name, this.state.dane[i].id, this.state.dane[i].numberOfTasks)}>
+                <Text style={styles.tileText}>{this.state.dane[i].name}</Text>
+              </TouchableOpacity>    
+  
+            )
+        }
     return (
-      // <LinearGradient colors={['#3a7bd5','#3a6073']} style={styles.linearGradient}>
       <LinearGradient colors={['#4c8ce6','#4B7284']} style={styles.linearGradient}>
 
         <View style={styles.container}>
@@ -46,22 +89,9 @@ export default class Drawer extends Component {
           <TouchableOpacity style={styles.tile} onPress={()=> this.goToScreen('Results')}>
             <Text style={styles.tileText}>Results</Text>
           </TouchableOpacity>
+          
+          {rows}
 
-          <TouchableOpacity style={styles.tile} onPress={()=> this.goToScreen('Test')}>
-              <Text style={styles.tileText}>Test #1</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.tile} onPress={()=> this.goToScreen('Test')}>
-              <Text style={styles.tileText}>Test #2</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.tile} onPress={()=> this.goToScreen('Test')}>
-              <Text style={styles.tileText}>Test #3</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.tile} onPress={()=> this.goToScreen('Test')}>
-              <Text style={styles.tileText}>Test #4</Text>
-          </TouchableOpacity>
         </View>
       </LinearGradient>
     );

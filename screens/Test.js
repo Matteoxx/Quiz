@@ -5,62 +5,39 @@ import {Navigation} from 'react-native-navigation';
 import LinearGradient from 'react-native-linear-gradient';
 import SQLite from 'react-native-sqlite-storage'
  
-var db = SQLite.openDatabase({name: 'mb.db', createFromLocation: '~www/md.db'});
+var db = SQLite.openDatabase({name: 'md.db', createFromLocation: '~www/md.db'});
 
 export default class Test extends Component {
-
+  questionId = 1;
+  points = 0;
   constructor(props) {
     super(props);
-
-    this.state = {
-      questionId: 1,
-      question: '',
-      ans1: '',
-      ans2: '',
-      ans3: '',
-      ans4: '',
-      ans5: '',
-      corrAns: '',
-      numberOfTasks: this.props.numberOfTasks,
-      points: 0,
-    };
     
+    this.state = {
+      test: {}
+    };
+  
   }
 
-  _selectData(testName,rowId){
+  _selectData(testId,rowId){
+
     db.transaction((tx) => {
      
-      tx.executeSql(`SELECT * FROM ${testName}`,[], (tx, results) => {
-          var len = results.rows.length;
-          if(len > 0) {
-            var row = results.rows.item(rowId - 1);
-            console.log(row)
-            this.setState({
-              question: row.question,
-              ans1: row.ans1,
-              ans2: row.ans2,
-              ans3: row.ans3,
-              ans4: row.ans4,
-              ans5: row.ans5,
-              corrAns: row.corrAns
-            });
-          }
-          console.log("question: ", this.state.question)
-          console.log("ans1: ", this.state.ans1)
-          console.log("ans2: ", this.state.ans2)
-          console.log("ans3: ", this.state.ans3)
-          console.log("ans4: ", this.state.ans4)
-          console.log("ans5: ", this.state.ans5)
-          
+      tx.executeSql(`SELECT * FROM tests WHERE id = ?`,[testId], (tx, results) => {
+      
+        this.setState({
+          test: results.rows.item(rowId - 1)
+        });
+
       });
     });
   }
 
   componentDidMount(){
-    this._selectData(this.props.testToSolve, this.state.questionId);
+    this._selectData(this.props.testToSolveId, this.questionId);
   }
 
-  goToScreen = (screenName) => {
+  goToScreen = (screenName, testName, points, numberOfTasks) => {
     Navigation.push(this.props.componentId, {
       component: {
         name: screenName,
@@ -72,7 +49,9 @@ export default class Test extends Component {
           }
         },
         passProps: {
-          points: this.state.points
+          testName: testName,
+          points: points,
+          numberOfTasks: numberOfTasks
         }
       }
     })
@@ -80,70 +59,61 @@ export default class Test extends Component {
 
 
 
-  _changeQuestion(){
+  _changeQuestion(id){
 
-    if(this.state.questionId < this.state.numberOfTasks){
-      this.setState({
-        questionId: ++this.state.questionId 
-      })
-      console.log("questionId: ", this.state.questionId)
-      this._selectData(this.props.testToSolve, this.state.questionId);
+    if(id <= this.state.test.numberOfTasks){
+      this._selectData(this.props.testToSolveId, id);
     } else {
-        this.goToScreen('Result')
+        
+        this.goToScreen('Result', this.props.testToSolveName, this.points, this.props.numberOfTasks)
     }
 
 }
 
   _countScore(ans){
     
-    console.log("answer: " + ans)
+    if(ans == this.state.test.corrAns){
 
-    if(ans == this.state.corrAns){
-      this.setState({
-        points: this.state.points + 1,
-      })
+      this.points++
     }
 
-    this._changeQuestion()
+    this.questionId++
+    this._changeQuestion(this.questionId)
   }
-
-
 
   render() {
 
     return (
-      <ScrollView>
+      
       <LinearGradient colors={['#fbc2eb','#a6c1ee']} style={styles.linearGradient}>
 
         <View style={styles.container}>
 
-            <Text style={styles.questionId}>Pytanie nr: {this.state.questionId}</Text>
+            <Text style={styles.questionId}>Pytanie nr: {this.questionId}</Text>
 
             <Text style={styles.questionText}>{this.state.question}</Text>
 
-            <TouchableOpacity style={styles.ansButton} onPress={() => {this._countScore(this.state.ans1)}} >
-              <Text style={styles.ansText}>{this.state.ans1}</Text>
+            <TouchableOpacity style={styles.ansButton} onPress={() => {this._countScore(this.state.test.ans1)}} >
+              <Text style={styles.ansText}>{this.state.test.ans1}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.ansButton} onPress={() => {this._countScore(this.state.ans2)}} >
-              <Text style={styles.ansText}>{this.state.ans2}</Text>
+            <TouchableOpacity style={styles.ansButton} onPress={() => {this._countScore(this.state.test.ans2)}} >
+              <Text style={styles.ansText}>{this.state.test.ans2}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.ansButton} onPress={() => {this._countScore(this.state.ans3)}} >
-              <Text style={styles.ansText}>{this.state.ans3}</Text>
+            <TouchableOpacity style={styles.ansButton} onPress={() => {this._countScore(this.state.test.ans3)}} >
+              <Text style={styles.ansText}>{this.state.test.ans3}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.ansButton} onPress={() => {this._countScore(this.state.ans4)}} >
-              <Text style={styles.ansText}>{this.state.ans4}</Text>
+            <TouchableOpacity style={styles.ansButton} onPress={() => {this._countScore(this.state.test.ans4)}} >
+              <Text style={styles.ansText}>{this.state.test.ans4}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.ansButton} onPress={() => {this._countScore(this.state.ans5)}} >
-              <Text style={styles.ansText}>{this.state.ans5}</Text>
+            <TouchableOpacity style={styles.ansButton} onPress={() => {this._countScore(this.state.test.ans5)}} >
+              <Text style={styles.ansText}>{this.state.test.ans5}</Text>
             </TouchableOpacity>
-
-            <Text>Punkty: {this.state.points}</Text>
-            <Text>Nazwa testu do rozwiazania: {this.props.testToSolve}</Text> 
+         
             {/* dodac czas na rozwiazanie zadania */}
 
           </View>
       </LinearGradient>
-      </ScrollView>
+   
     );
   }
 }
