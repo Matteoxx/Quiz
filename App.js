@@ -75,7 +75,7 @@ export default class App extends Component {
                 })
 
                 for(let i = 0; i < columnsTotal - columnsAdded; i++ ){
-                  query = query + ", 'null'"
+                  query = query + ", ''"
                 }
                 query = query + ")"
 

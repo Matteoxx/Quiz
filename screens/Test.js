@@ -33,6 +33,8 @@ export default class Test extends Component {
     });
   }
 
+
+
   componentDidMount(){
     this._selectData(this.props.testToSolveId, this.questionId);
   }
@@ -91,7 +93,7 @@ export default class Test extends Component {
 
             <Text style={styles.questionId}>Pytanie nr: {this.questionId}</Text>
 
-            <Text style={styles.questionText}>{this.state.question}</Text>
+            <Text style={styles.questionText}>{this.state.test.question}</Text>
 
             <TouchableOpacity style={styles.ansButton} onPress={() => {this._countScore(this.state.test.ans1)}} >
               <Text style={styles.ansText}>{this.state.test.ans1}</Text>
@@ -134,12 +136,12 @@ const styles = StyleSheet.create({
     fontSize: 32,
     borderBottomWidth: 1,
     paddingBottom: 5,
-    marginBottom: 30
+    marginBottom: 15
   },
   questionText: {
     textAlign: 'center',
-    fontSize: 22,
-    marginBottom: 20,
+    fontSize: 20,
+    marginBottom: 10,
     fontFamily: 'Lato-Bold'
   },
   ansButton: {
@@ -154,7 +156,7 @@ const styles = StyleSheet.create({
     margin: 2,
   },
   ansText: {
-    fontSize: 18,
+    fontSize: 16,
     textAlign: 'center'
   }
 

@@ -12,22 +12,24 @@ export default class Result extends Component {
     currentDate = new Date().toJSON().slice(0,10).replace(/-/g,'/');
     this.state = {
       payload: {
-        "nick": "undefined",
+        "nick": "noname",
         "score": this.props.points,
         "total": this.props.numberOfTasks,
         "type": this.props.testName,
         "date": currentDate
-      }
+      },
+     
     }
 
   }
 
-    _sendResult(){
+    _sendResult(res){
       
       fetch('https://pwsz-quiz-api.herokuapp.com/api/result', {
         method: 'POST',
         body: JSON.stringify(res),
       });
+
 
     }
 
@@ -39,13 +41,21 @@ export default class Result extends Component {
           <View style={styles.container}>
 
             <Text style={styles.resultText}>Twój wynik to: </Text>
-            <Text style={styles.pointsTxt}>{this.props.points} </Text>
+            <Text style={styles.pointsTxt}>{this.props.points}/{this.props.numberOfTasks} </Text>
             <TextInput style={styles.textInput} placeholder="Wprowadź swoje imię"
-              onChangeText={(text) => this.setState({
-                nick: text
-              })}
+              onChangeText={(text) => {
+                this.setState({
+                  payload: {
+                    ...this.state.payload,
+                    nick: text
+                  }
+                })
+              }
+              }
+               
             />
-            <TouchableOpacity style={styles.saveBtn} onPress={()=>this._sendResult()}>
+
+            <TouchableOpacity style={styles.saveBtn} onPress={()=>this._sendResult(this.state.payload)}>
               <Text style={styles.saveBtnTxt}>Save result</Text>
             </TouchableOpacity>
             
@@ -72,7 +82,7 @@ const styles = StyleSheet.create({
   },
   pointsTxt: {
     marginTop: '7%',
-    fontSize: 82,
+    fontSize: 96,
     fontFamily: 'Lato-Bold',
     textAlign: 'center'
   },
