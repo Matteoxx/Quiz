@@ -15,35 +15,27 @@ export default class App extends Component {
     super(props);
 
     this.state = {
-      isLoading: true
+      tests: {}
     }
-
 
   }
 
-  _downloadData(){
+  _insertData(){
     fetch("https://pwsz-quiz-api.herokuapp.com/api/tests")
     .then((response) => response.json())
     .then((responseJson) => {
-      
-        this.setState({
-            isLoading: false,
-            tests: responseJson
-        })    
-        
-        this._insertDataToDatabase();
+        this.setState({tests: responseJson})    
+        this._addTestsToDatabase();
     });
   }
 
-  _insertDataToDatabase(){
+  _addTestsToDatabase(){
+    AsyncStorage.setItem('databaseDownloadDate', JSON.stringify({"value": Date()}));
 
     db.transaction((tx) => {
-      tx.executeSql('DROP table tests');
+      tx.executeSql('DELETE FROM tests');
     });
-    db.transaction((tx) => {
-      tx.executeSql(`CREATE TABLE 'tests' ( 'id' TEXT, 'name' TEXT, 'numberOfTasks' TEXT, 'question' TEXT, 'corrAns' TEXT, 'ans1' TEXT, 'ans2' TEXT, 'ans3' TEXT, 'ans4' TEXT, 'ans5' TEXT )`);
-    });
-    
+ 
     _.map(this.state.tests, function(test){
 
         fetch("https://pwsz-quiz-api.herokuapp.com/api/test/" + test.id)
@@ -87,14 +79,42 @@ export default class App extends Component {
             
         );
     })
-
   }
+
+  _downloadDataFromDatabase() {
+    db.transaction((tx) => {
+        tx.executeSql('SELECT * FROM tests;', [], (tx, results) => {
+            var tests = [];
+            for (let i = 0; i < results.rows.length; i++) {
+                tests[i] = results.rows.item(i);
+            }
+            this.setState({tests: tests});
+
+        });
+    });
+};
 
   async componentDidMount() {
 
     SplashScreen.hide();
-    
-    this._downloadData();
+
+    try {
+      const value = await AsyncStorage.getItem('databaseDownloadDate');
+      if (value == null) {
+          console.log("wprowadzam testy do bazy")
+          this._insertData();
+      } else {
+          let currentDate = new Date().toJSON().slice(0,10).replace(/-/g,'/')
+          let then = new Date(JSON.parse(value).value)
+          then = then.toJSON().slice(0,10).replace(/-/g,'/')
+          if (currentDate != then) {
+            this._insertData();
+          } else {
+              this._downloadDataFromDatabase();
+          }
+      }
+    } catch (error) {
+      }
 
   }
 
@@ -134,26 +154,28 @@ export default class App extends Component {
     })
   }
 
-  _renderTests(){
-    return _.map(this.state.tests, test => {
-      return (
-        <TouchableOpacity style={styles.tile} onPress={()=>this.goToTestScreen('Test', test.name, test.id, test.numberOfTasks)}>
-          <Text style={styles.title}>{test.name}</Text>
-          <Text style={{color: 'blue'}}>
-            {_.map(test.tags, y => {
-              return '#' + y + ' ' 
-            })}
-          </Text>
-          <Text style={styles.desc}>Poziom trudności: {test.level}</Text>
-          <Text style={styles.desc}>Liczba zadań: {test.numberOfTasks}</Text>
-          <Text style={styles.desc}>Opis: {test.description}</Text>
-        </TouchableOpacity>
-      )
-    })
-  }
-
   
   render() {
+
+    let rows = [];
+
+    _.map(this.state.tests, (test, index) => {
+      rows.push(
+        <View key={index} >
+          <TouchableOpacity style={styles.tile} key={index} onPress={()=>this.goToTestScreen('Test', test.name, test.id, test.numberOfTasks)}>
+            <Text style={styles.title}>{test.name}</Text>
+            <Text style={{color: 'blue'}}>
+              {_.map(test.tags, y => {
+                return '#' + y + ' ' 
+              })}
+            </Text>
+            <Text style={styles.desc}>Poziom trudności: {test.level}</Text>
+            <Text style={styles.desc}>Liczba zadań: {test.numberOfTasks}</Text>
+            <Text style={styles.desc}>Opis: {test.description}</Text>
+          </TouchableOpacity>
+        </View>
+      )
+    })
 
     return (
 
@@ -166,7 +188,7 @@ export default class App extends Component {
           </View>
           <ScrollView>
 
-            {this._renderTests()}
+            {rows}
   
             <View style={styles.results}>
               <Text style={styles.resultsText}>Get to know your ranking results</Text>
